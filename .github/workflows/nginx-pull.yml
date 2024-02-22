@@ -42,6 +42,8 @@ jobs:
       - name: Create PR
         run: |
           set -euxo pipefail
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
           gh pr create \
           --base main \
           --head helm-ingress-nginx-v${{inputs.chartVersion}} \
