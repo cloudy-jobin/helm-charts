@@ -48,3 +48,4 @@ jobs:
           --label nginx-helm-pull \
           --title 'Helm Chart for ingress-nginx v${{inputs.chartVersion}}' \
           --body 'Created by ${{ github.workflow }} workflow' \
+          --draft
