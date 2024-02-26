@@ -47,4 +47,5 @@ jobs:
           gh pr create \
           --base main \
           --head helm-ingress-nginx-v${{inputs.chartVersion}} \
-          --title 'Helm Chart for ingress-nginx v${{inputs.chartVersion}}'
+          --title 'Helm Chart for ingress-nginx v${{inputs.chartVersion}}' \
+          --fill
