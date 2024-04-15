@@ -42,8 +42,8 @@ jobs:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           set -euxo pipefail
-          git config user.name "${{ github.triggering_actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name "${{ github.actor_id }}"
+          git config user.email "${{ github.actor_id }}@users.noreply.github.com"
           git checkout -b helm-ingress-nginx-v${{inputs.chartVersion}}
           git add ingress-nginx/v${{inputs.chartVersion}}
           git commit -m "added chart for ingress nginx v${{inputs.chartVersion}}"
