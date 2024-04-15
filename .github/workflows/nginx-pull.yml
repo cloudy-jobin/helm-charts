@@ -7,8 +7,9 @@ on:
         default: 4.8.0
 permissions: {}
 
-env:
-  GH_TOKEN: ${{ github.token }}
+# env:
+#   GH_TOKEN: ${{ github.token }}
+
 jobs:
   ingress-nginx-pull:
     runs-on: ubuntu-20.04
@@ -17,8 +18,15 @@ jobs:
       contents: write
       pull-requests: write
     steps:
+      - uses: actions/create-github-app-token@v1
+        id: generate-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
       - name: Checkout Repository
         uses: actions/checkout@v3
+
       - name: Download Chart
         run: |
           set -euxo pipefail
@@ -28,7 +36,10 @@ jobs:
           mkdir -p ingress-nginx/v${{inputs.chartVersion}}
           cp -pr /tmp/ingress-nginx/* ingress-nginx/v${{inputs.chartVersion}}
           ls -l ingress-nginx/v${{inputs.chartVersion}}
+
       - name: Push to Github Repo
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           set -euxo pipefail
           git config user.name "${{ github.triggering_actor }}"
@@ -37,9 +48,13 @@ jobs:
           git add ingress-nginx/v${{inputs.chartVersion}}
           git commit -m "added chart for ingress nginx v${{inputs.chartVersion}}"
           git push origin helm-ingress-nginx-v${{inputs.chartVersion}}
+
       - name: Sleep for Five
         run: sleep 5
+
       - name: Create PR
+        env:
+          GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
           set -euxo pipefail
           git config user.name "${{ github.triggering_actor }}"
@@ -48,4 +63,4 @@ jobs:
           --base main \
           --head helm-ingress-nginx-v${{inputs.chartVersion}} \
           --title 'Helm Chart for ingress-nginx v${{inputs.chartVersion}}' \
-          --fill
+          --body 'Created by ${{ github.workflow}}'
