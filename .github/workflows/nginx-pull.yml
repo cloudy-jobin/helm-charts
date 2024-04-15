@@ -7,16 +7,9 @@ on:
         default: 4.8.0
 permissions: {}
 
-# env:
-#   GH_TOKEN: ${{ github.token }}
-
 jobs:
   ingress-nginx-pull:
     runs-on: ubuntu-20.04
-    permissions:
-      id-token: write
-      contents: write
-      pull-requests: write
     steps:
       - uses: actions/create-github-app-token@v1
         id: generate-token
@@ -25,7 +18,7 @@ jobs:
           private-key: ${{ secrets.PRIVATE_KEY }}
 
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ steps.generate-token.outputs.token }}
 
